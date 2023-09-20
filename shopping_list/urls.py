@@ -21,8 +21,3 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
 ]
-
-# Berkas urls.py pada proyek bertanggung jawab untuk mengatur rute URL tingkat proyek.
-# Fungsi include digunakan untuk mengimpor rute URL dari aplikasi lain (dalam hal ini, dari aplikasi main) ke dalam berkas urls.py proyek.
-# Path URL 'main/' akan diarahkan ke rute yang didefinisikan dalam berkas urls.py aplikasi main.
-# atau bisa juga menggunakan path URL ''
