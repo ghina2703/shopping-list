@@ -6,30 +6,28 @@ from django.contrib.auth import logout as auth_logout
 
 @csrf_exempt
 def login(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        if user.is_active:
-            auth_login(request, user)
-            # Status login sukses.
-            return JsonResponse({
-                "username": user.username,
-                "status": True,
-                "message": "Login sukses!"
-                # Tambahkan data lainnya jika ingin mengirim data ke Flutter.
-            }, status=200)
-        else:
-            return JsonResponse({
-                "status": False,
-                "message": "Login gagal, akun dinonaktifkan."
-            }, status=401)
+    if request.method == 'POST':
+        # Check if 'username' and 'password' keys are present in request.POST
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
+        if username is not None and password is not None:
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                if user.is_active:
+                    auth_login(request, user)
+                    # Status login sukses.
+                    return JsonResponse({'status': 'success'})
+                else:
+                    return JsonResponse({'status': 'inactive'})
+            else:
+                return JsonResponse({'status': 'invalid_credentials'})
+        else:
+            return JsonResponse({'status': 'missing_fields'})
     else:
-        return JsonResponse({
-            "status": False,
-            "message": "Login gagal, periksa kembali email atau kata sandi."
-        }, status=401)
+        # Handle cases where the request method is not POST
+        return JsonResponse({'status': 'method_not_allowed'})
 
 @csrf_exempt
 def logout(request):
