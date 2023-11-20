@@ -20,11 +20,13 @@ from django.views.decorators.csrf import csrf_exempt
 def show_main(request):
     products = Product.objects.filter(user=request.user)
 
+    last_login = request.COOKIES.get('last_login', 'N/A')
+
     context = {
         'name': request.user.username,
-        'class': 'PBP B', 
+        'class': 'PBP B',
         'products': products,
-        'last_login': request.COOKIES['last_login'],
+        'last_login': last_login,
     }
 
     return render(request, "main.html", context)
@@ -143,14 +145,15 @@ def add_product_ajax(request):
 @csrf_exempt
 def create_product_flutter(request):
     if request.method == 'POST':
-        
+        import json  # Add this import statement
+
         data = json.loads(request.body)
 
         new_product = Product.objects.create(
-            user = request.user,
-            name = data["name"],
-            price = int(data["price"]),
-            description = data["description"]
+            user=request.user,
+            name=data["name"],
+            price=int(data["price"]),
+            description=data["description"]
         )
 
         new_product.save()
