@@ -6,47 +6,47 @@ from django.views.decorators.csrf import csrf_exempt
 # from django.contrib.auth.forms import UserCreationForm
 
 
-@csrf_exempt
-def login(request):
-    if request.method == 'POST':
-        # Check if 'username' and 'password' keys are present in request.POST
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+# @csrf_exempt
+# def login(request):
+#     if request.method == 'POST':
+#         # Check if 'username' and 'password' keys are present in request.POST
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
 
-        if username is not None and password is not None:
-            user = authenticate(username=username, password=password)
+#         if username is not None and password is not None:
+#             user = authenticate(username=username, password=password)
 
-            if user is not None:
-                if user.is_active:
-                    auth_login(request, user)
-                    # Status login sukses.
-                    return JsonResponse({'status': 'success'})
-                else:
-                    return JsonResponse({'status': 'inactive'})
-            else:
-                return JsonResponse({'status': 'invalid_credentials'})
-        else:
-            return JsonResponse({'status': 'missing_fields'})
-    else:
-        # Handle cases where the request method is not POST
-        return JsonResponse({'status': 'method_not_allowed'})
+#             if user is not None:
+#                 if user.is_active:
+#                     auth_login(request, user)
+#                     # Status login sukses.
+#                     return JsonResponse({'status': 'success'})
+#                 else:
+#                     return JsonResponse({'status': 'inactive'})
+#             else:
+#                 return JsonResponse({'status': 'invalid_credentials'})
+#         else:
+#             return JsonResponse({'status': 'missing_fields'})
+#     else:
+#         # Handle cases where the request method is not POST
+#         return JsonResponse({'status': 'method_not_allowed'})
 
-@csrf_exempt
-def logout(request):
-    username = request.user.username
+# @csrf_exempt
+# def logout(request):
+#     username = request.user.username
 
-    try:
-        auth_logout(request)
-        return JsonResponse({
-            "username": username,
-            "status": True,
-            "message": "Logout berhasil!"
-        }, status=200)
-    except:
-        return JsonResponse({
-        "status": False,
-        "message": "Logout gagal."
-        }, status=401)
+#     try:
+#         auth_logout(request)
+#         return JsonResponse({
+#             "username": username,
+#             "status": True,
+#             "message": "Logout berhasil!"
+#         }, status=200)
+#     except:
+#         return JsonResponse({
+#         "status": False,
+#         "message": "Logout gagal."
+#         }, status=401)
 
 # @csrf_exempt
 # def register(request):
@@ -74,3 +74,48 @@ def logout(request):
 #     else:
 #         # Handle cases where the request method is not POST
 #         return JsonResponse({'status': 'method_not_allowed'})
+
+@csrf_exempt
+def login(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            auth_login(request, user)
+            # Status login sukses.
+            return JsonResponse({
+                "username": user.username,
+                "status": True,
+                "message": "Login sukses!"
+                # Tambahkan data lainnya jika ingin mengirim data ke Flutter.
+            }, status=200)
+        else:
+            return JsonResponse({
+                "status": False,
+                "message": "Login gagal, akun dinonaktifkan."
+            }, status=401)
+
+    else:
+        return JsonResponse({
+            "status": False,
+            "message": "Login gagal, periksa kembali email atau kata sandi."
+        }, status=401)
+
+@csrf_exempt
+def logout(request):
+    username = request.user.username
+
+    try:
+        auth_logout(request)
+        return JsonResponse({
+            "username": username,
+            "status": True,
+            "message": "Logout berhasil!"
+        }, status=200)
+    except:
+        return JsonResponse({
+        "status": False,
+        "message": "Logout gagal."
+        }, status=401)
+
