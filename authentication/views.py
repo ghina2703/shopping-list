@@ -1,8 +1,10 @@
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+
 
 @csrf_exempt
 def login(request):
@@ -45,3 +47,30 @@ def logout(request):
         "status": False,
         "message": "Logout gagal."
         }, status=401)
+
+@csrf_exempt
+def register(request):
+    if request.method == 'POST':
+        # Check if 'username', 'password', and 'email' keys are present in request.POST
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+
+        if username is not None and password is not None and email is not None:
+            # Check if the username is already taken
+            if User.objects.filter(username=username).exists():
+                return JsonResponse({'status': 'username_taken'})
+            
+            # Create a new user
+            user = User.objects.create_user(username=username, password=password, email=email)
+            
+            # Log the user in
+            auth_login(request, user)
+            
+            # Status registrasi sukses.
+            return JsonResponse({'status': 'success'})
+        else:
+            return JsonResponse({'status': 'missing_fields'})
+    else:
+        # Handle cases where the request method is not POST
+        return JsonResponse({'status': 'method_not_allowed'})
