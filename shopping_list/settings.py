@@ -106,8 +106,8 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SAMESITE = 'None'
+CSRF_TRUSTED_ORIGINS = ['https://ghina-nabila21-tutorial.pbp.cs.ui.ac.id']
 
-SECURE_CROSS_ORIGIN_OPENER_POLICY = "unsafe-none"
 
 CORS_ALLOW_HEADERS = [
     'accept',

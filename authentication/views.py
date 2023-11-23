@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 import json
 
-@csrf_exempt
+# @csrf_exempt
 def register(request):
     try:
         data = json.loads(request.body)
@@ -43,7 +43,7 @@ def register(request):
         }, status=500)
 
 
-@csrf_exempt
+# @csrf_exempt
 def login(request):
     username = request.POST['username']
     password = request.POST['password']
